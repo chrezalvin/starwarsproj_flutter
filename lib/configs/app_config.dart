@@ -21,7 +21,8 @@ class NavItemType{
 }
 
 class AppConfig{
-  static String apiBaseUrl = "https://swapi.dev/api";
+  static String apiBaseUrl = "";
+  static String ensevalGuardUrl = "";
 
   static List<NavItemType> navList = [
     NavItemType(People, Icons.people, "People"),

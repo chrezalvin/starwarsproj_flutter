@@ -1,9 +1,25 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logging/logging.dart';
-import 'package:starwarsproj_flutter/pages/home_page.dart';
+import 'package:starwarsproj_flutter/configs/app_config.dart';
+import 'package:starwarsproj_flutter/pages/login_page.dart';
 
 void main() async {
+  // loads environtment variable
+  await dotenv.load(fileName: ".env");
+
+  var ensevalGuardUrl = dotenv.env["ENSEVAL_GUARD_URL"];
+  var swapiBaseUrl = dotenv.env["SWAPI_BASE_URL"];
+
+  if(ensevalGuardUrl != null) {
+    AppConfig.ensevalGuardUrl = ensevalGuardUrl;
+  }
+
+  if(swapiBaseUrl != null){
+    AppConfig.apiBaseUrl = swapiBaseUrl;
+  }
+
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
     // ignore: avoid_print
@@ -34,6 +50,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {    
-    return HomePage();
+    return LoginPage();
   }
 }
