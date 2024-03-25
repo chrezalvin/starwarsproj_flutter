@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logging/logging.dart';
 import 'package:starwarsproj_flutter/configs/app_config.dart';
+import 'package:starwarsproj_flutter/pages/home_page.dart';
 import 'package:starwarsproj_flutter/pages/login_page.dart';
 
 void main() async {

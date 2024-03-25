@@ -47,7 +47,7 @@ class HomePage extends StatelessWidget {
                     icon: Icon(Icons.favorite, color: Colors.red[400]),
                     onPressed: () => Navigator.push(
                                 context, 
-                                MaterialPageRoute(builder: (context) => FavoritesPage())
+                                MaterialPageRoute(builder: (context) => const FavoritesPage())
                               ),
                   ),
                 ),

@@ -81,7 +81,7 @@ class _EntityCardState extends State<EntityCard> {
               ),
               onPressed: widget.onSetFavorite,
               padding: EdgeInsets.zero,
-              constraints: BoxConstraints(),
+              constraints: const BoxConstraints(),
             )
           ),
         )

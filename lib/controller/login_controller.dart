@@ -1,7 +1,10 @@
-import 'package:get/get.dart';
-import 'package:logging/logging.dart';
+import 'dart:async';
 
-import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
+import 'package:http/http.dart';
+import 'package:logging/logging.dart';
+import 'package:starwarsproj_flutter/pages/home_page.dart';
+import 'package:starwarsproj_flutter/service/enseval_service.dart';
 
 class LoginController extends GetxController{
   final Logger log = Logger("LoginController");
@@ -13,6 +16,10 @@ class LoginController extends GetxController{
   
   final RxString _errorMessage = "".obs;
 
+  // only checks if the username and password is not empty
+  final RxBool _validateUsername = false.obs;
+  final RxBool _validatePassword = false.obs;
+
   // getter
   String get username => _username.value;
   String get password => _password.value;
@@ -20,6 +27,9 @@ class LoginController extends GetxController{
   bool get isLoading => _isLoading.value;
   String  get error => _errorMessage.value;
   bool get isError => _errorMessage.value.isNotEmpty;
+  bool get validateUsername => _validateUsername.value;
+  bool get validatePassword => _validatePassword.value;
+  bool get isLoginDisabled => username.isEmpty || password.isEmpty || isLoading;
 
   // this is the private base setter
   void _setUsername(String value) => _username.value = value;
@@ -27,12 +37,12 @@ class LoginController extends GetxController{
   void _togglePasswordVisible() => _passwordVisible.value = !_passwordVisible.value;
   void _setLoading(bool value) => _isLoading.value = value;
   void _setError(String message) => _errorMessage.value = message;
-  Future<void> _login() async{
-    // simulate a login process
-    await Future.delayed(const Duration(seconds: 2));
+  void _setValidateUsername(bool value) => _validateUsername.value = value;
+  void _setValidatePassword(bool value) => _validatePassword.value = value;
+  Future<dynamic> _login() async{
+    var res = await EnsevalService().login(username, password);
 
-    // simulate error
-    throw UnimplementedError("Login failed");
+    return res;
   }
 
   // setter with logging
@@ -56,32 +66,58 @@ class LoginController extends GetxController{
     _setLoading(value);
   }
 
-  void triggerError(
-    {
-      required String message,
-      int cancelTimeMs = 2000
-    }
-    ){
-      log.info("triggered an error with message: $message");
-      _setError(message);
+  void setValidateUsername(bool value){
+    log.info("Setting validate username to $value");
+    _setValidateUsername(value);
+  }
 
-      Future.delayed(Duration(milliseconds: cancelTimeMs), (){
-        _setError("");
-        log.info("cleaned the error message");
-      });
-    }
+  void setValidatePassword(bool value){
+    log.info("Setting validate password to $value");
+    _setValidatePassword(value);
+  }
   
   Future<void> login() async {
+    setValidateUsername(username.isEmpty);
+    setValidatePassword(password.isEmpty);
+
+    if(validateUsername || validatePassword){
+      log.warning("Username or password is empty");
+      return;
+    }
+
     setLoading(true);
 
     try{
       log.info("Logging in");
-      await _login();
+      var res = await _login();
+      if(res == null){
+        _setError("Invalid username or password");
+      }
+      else{
+        log.info("Login success");
+
+        // go to home page
+        if(res != null){
+          Get.to(HomePage());
+        }
+      }
+
       log.info("Logging finished");
+    } 
+    on Exception catch(e)
+    {
+      if(e is ClientException){
+        _setError("Invalid username or password");
+      }
+      else if(e is TimeoutException){
+        _setError("Request timeout");
+      }
+      else{
+        _setError("Unknown error occured!");
+      }
     }
     catch(e){
-      log.warning("error occured");
-      setUsername("");
+      log.warning("error occured $e");
       _setError("Unknown error occured!");
     }
     finally{

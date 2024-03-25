@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <script src="coi-serviceworker.js"></script>
   <!--
     If you are serving your web app in a path other than the root, change the
     href value below to reflect the base path you are serving from.
@@ -54,6 +55,17 @@
         }
       });
     });
+
+    if (self.crossOriginIsolated) {
+        console.log("Cross-Origin-Isolated");
+      } else {
+        console.log("Not Cross-Origin-Isolated");
+      }
+      if (window.isSecureContext) {
+        console.log("Secure Context");
+      } else {
+        console.log("Not Secure Context");
+      }
   </script>
 </body>
 </html>

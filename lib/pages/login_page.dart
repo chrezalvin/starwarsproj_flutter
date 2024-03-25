@@ -34,11 +34,11 @@ class LoginPage extends StatelessWidget{
                         children: [
                           TextField(
                             onChanged: (e) => controller.setUsername(e),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: "Username",
-                              icon: Icon(Icons.people)
+                              icon: const Icon(Icons.people),
+                              errorText: controller.validateUsername ? "Username cannot be empty" : null,
                             ),
-                            
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -48,6 +48,7 @@ class LoginPage extends StatelessWidget{
                               decoration: InputDecoration(
                                 labelText: "Password",
                                 icon: const Icon(Icons.lock),
+                                errorText: controller.validatePassword ? "Password cannot be empty" : null,
                                 suffixIcon: Padding(
                                   padding: const EdgeInsets.only(top: 15.0),
                                   child: IconButton(
@@ -59,7 +60,7 @@ class LoginPage extends StatelessWidget{
                             ),
                           ),
                           ElevatedButton(
-                            onPressed: controller.isLoading ? null : () {
+                            onPressed: controller.isLoginDisabled ? null : () {
                               controller.login();
                             },
                             child: controller.isLoading ? const SizedBox(
